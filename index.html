@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام حجز الحلاقين</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- صفحة اختيار الدور -->
+    <div id="roleSelection" class="container role-selection">
+        <h1>اختر دورك</h1>
+        <button class="role-btn client-btn" onclick="showScreen('clientLogin')">زبون</button>
+        <button class="role-btn barber-btn" onclick="showScreen('barberLogin')">حلاق</button>
+    </div>
+
+    <!-- تسجيل دخول الزبون -->
+    <div id="clientLogin" class="container login-container hidden">
+        <div class="login-box">
+            <h2>تسجيل دخول الزبون</h2>
+            <div id="clientError" class="error-message hidden"></div>
+            <div class="form-group">
+                <label for="clientName">الاسم الكامل</label>
+                <input type="text" id="clientName" placeholder="أدخل اسمك الكامل" required>
+            </div>
+            <div class="form-group">
+                <label for="clientPhone">رقم الهاتف</label>
+                <input type="tel" id="clientPhone" placeholder="أدخل رقم الهاتف" required>
+            </div>
+            <button class="login-btn" onclick="clientLogin()">دخول</button>
+            <button class="back-btn" onclick="showScreen('roleSelection')">رجوع</button>
+        </div>
+    </div>
+
+    <!-- تسجيل دخول وإنشاء حساب الحلاق -->
+    <div id="barberLogin" class="container login-container hidden">
+        <div class="login-box">
+            <h2 id="barberFormTitle">تسجيل الدخول للحلاقين</h2>
+            <div id="barberError" class="error-message hidden"></div>
+            
+            <div id="barberLoginForm">
+                <div class="form-group">
+                    <label for="barberPhone">رقم الهاتف</label>
+                    <input type="tel" id="barberPhone" placeholder="أدخل رقم الهاتف المسجل" required>
+                </div>
+                <div class="form-group">
+                    <label for="barberPassword">كلمة المرور</label>
+                    <input type="password" id="barberPassword" placeholder="أدخل كلمة المرور" required>
+                </div>
+                <button class="login-btn" onclick="barberLogin()">تسجيل الدخول</button>
+                <button class="switch-btn" onclick="showBarberSignup()">إنشاء حساب جديد</button>
+            </div>
+            
+            <div id="barberSignupForm" class="hidden">
+                <div class="form-group">
+                    <label for="barberName">اسم الحلاق</label>
+                    <input type="text" id="barberName" placeholder="أدخل اسم الحلاق" required>
+                </div>
+                <div class="form-group">
+                    <label for="newBarberPhone">رقم الهاتف</label>
+                    <input type="tel" id="newBarberPhone" placeholder="أدخل رقم هاتفك" required>
+                </div>
+                <div class="form-group">
+                    <label for="barberImage">صورة الحلاق</label>
+                    <input type="file" id="barberImage" accept="image/*">
+                </div>
+                <div class="form-group">
+                    <label for="newBarberPassword">كلمة المرور</label>
+                    <input type="password" id="newBarberPassword" placeholder="اختر كلمة مرور (6 أحرف على الأقل)" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirmBarberPassword">تأكيد كلمة المرور</label>
+                    <input type="password" id="confirmBarberPassword" placeholder="أعد إدخال كلمة المرور" required>
+                </div>
+                <button class="login-btn" onclick="barberSignup()">إنشاء حساب</button>
+                <button class="switch-btn" onclick="showBarberLogin()">لديك حساب؟ تسجيل الدخول</button>
+            </div>
+            
+            <button class="back-btn" onclick="showScreen('roleSelection')">رجوع</button>
+        </div>
+    </div>
+
+    <!-- لوحة تحكم الحلاق -->
+    <div id="barberDashboard" class="dashboard hidden">
+        <div class="header">
+            <div class="header-title">لوحة تحكم الحلاق</div>
+            <div class="shop-status">
+                <span class="status-text" id="statusText">مفتوح</span>
+                <label class="status-toggle">
+                    <input type="checkbox" id="statusToggle" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="user-info">
+                <div class="user-avatar" id="barberAvatar">ح</div>
+                <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i></button>
+            </div>
+        </div>
+        <div class="content">
+            <h2 class="section-title">قائمة الانتظار</h2>
+            <ul class="queue-list" id="barberQueue"></ul>
+        </div>
+    </div>
+
+    <!-- لوحة تحكم الزبون -->
+    <div id="clientDashboard" class="dashboard hidden">
+        <div class="header">
+            <div class="header-title">لوحة تحكم الزبون</div>
+            <div class="user-info">
+                <div class="user-avatar" id="clientAvatar">ز</div>
+                <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i></button>
+            </div>
+        </div>
+        <div class="content">
+            <div id="currentBookingContainer" class="hidden">
+                <div class="current-booking">
+                    <h3 class="booking-title">حجزك الحالي</h3>
+                    <div class="booking-info">
+                        <span class="booking-label">الحلاق:</span>
+                        <span id="bookingBarber"></span>
+                    </div>
+                    <div class="booking-info">
+                        <span class="booking-label">موقعك في الطابور:</span>
+                        <span id="bookingPosition"></span>
+                    </div>
+                    <div class="booking-info">
+                        <span class="booking-label">وقت الحجز:</span>
+                        <span id="bookingTime"></span>
+                    </div>
+                    <button id="cancelBookingBtn" class="cancel-btn">إلغاء الحجز</button>
+                </div>
+            </div>
+            
+            <h2 class="section-title">الحلاقون المتاحون</h2>
+            <div class="barbers-list" id="barbersList"></div>
+        </div>
+    </div>
+
+    <script src="app.js" type="module"></script>
+</body>
+</html>
